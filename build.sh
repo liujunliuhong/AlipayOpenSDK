@@ -2,10 +2,11 @@
 
 echo "===============================Begin Build======================================"
 
-# QQ互联官方SDK下载页面
-Alipay_DOWNLOAD_URL="https://opendocs.alipay.com/open/02no45"
 
-LOCAL_Alipay_DOWNLOAD_HTML_FILE="AlipayDownload.html"
+ALIPAY_MAIN_PAGE_URL="https://opendocs.alipay.com/open/"
+ALIPAY_MAIN_HTML_FILE="AlipayMain.html"
+MAIN_REPO_CODE=""
+
 
 Alipay_SDK_DOWNLOAD_URL=""                                 # Alipay互联SDK下载地址
 Alipay_SDK_VERSION=""                                      # Alipay互联SDK版本号
@@ -29,6 +30,18 @@ LAST_LOCAL_Alipay_PODSPEC_VERSION=""                       # 本地podspec文件
 #         # echo -e "\n"
 #     fi
 # }
+
+function getMainRepoCode() {
+        if [ -f "${ALIPAY_MAIN_HTML_FILE}" ]; then
+        pattern="mainRepoCode\":\"[a-zA-Z0-9]*\""
+        MAIN_REPO_CODE=$(grep -o "${pattern}" ${ALIPAY_MAIN_HTML_FILE} | sed 's/mainRepoCode\":\"//g' | sed 's/\"//g')
+        echo "MainRepoCode: ${MAIN_REPO_CODE}"
+        # echo -e "\n"
+    else
+        echo "${ALIPAY_MAIN_HTML_FILE}不存在"
+        # echo -e "\n"
+    fi
+}
 
 # function getAlipayProperties() {
 #     if [ -f "${LOCAL_QQ_DOWNLOAD_HTML_FILE}" ]; then
@@ -55,17 +68,52 @@ LAST_LOCAL_Alipay_PODSPEC_VERSION=""                       # 本地podspec文件
 # 获取本地podspec文件的version，以便于和官方version做比较
 # getLocalPodVersion
 
-# 移除压缩文件夹
-rm -rf ${LOCAL_Alipay_ZIP}
+# # 移除压缩文件夹
+# rm -rf ${LOCAL_Alipay_ZIP}
 
-# 移除解压缩文件夹
-rm -rf ${LOCAL_Alipay_UNZIP_DIRECTORY}
+# # 移除解压缩文件夹
+# rm -rf ${LOCAL_Alipay_UNZIP_DIRECTORY}
 
-# 移除html
-rm -rf ${LOCAL_Alipay_DOWNLOAD_HTML_FILE}
 
-# 下载html
-curl ${Alipay_DOWNLOAD_URL} >${LOCAL_Alipay_DOWNLOAD_HTML_FILE}
+rm -rf ${ALIPAY_MAIN_HTML_FILE}
+curl ${ALIPAY_MAIN_PAGE_URL} >${ALIPAY_MAIN_HTML_FILE}
+
+getMainRepoCode
+
+ALIPAY_NAVIGATOR_URL="https://opendocs.alipay.com/api/navigator/${MAIN_REPO_CODE}?_output_charset=utf-8&_input_charset=utf-8"
+ALIPAY_NAVIGATOR_JSON_FILE="AlipayNavigator.json"
+
+echo "Navigator URL: ${ALIPAY_NAVIGATOR_URL}"
+
+# brew install jq
+
+rm -rf ${ALIPAY_NAVIGATOR_JSON_FILE}
+curl -s "${ALIPAY_NAVIGATOR_URL}" | jq . > ${ALIPAY_NAVIGATOR_JSON_FILE}
+
+CATALOG_CODE=$(cat ${ALIPAY_NAVIGATOR_JSON_FILE} | jq '.[0].childrenCatalog[3].catalogCode'  | sed 's/\"//g')
+echo "CatalogCode: ${CATALOG_CODE}"
+
+CATALOG_CODE_URL="https://opendocs.alipay.com/api/catalogChildren/${MAIN_REPO_CODE}/${CATALOG_CODE}?_output_charset=utf-8&_input_charset=utf-8"
+CATALOG_CODE_JSON_FILE="CatalogCode.json"
+echo "CatalogCode URL: ${CATALOG_CODE_URL}"
+
+rm -rf ${CATALOG_CODE_JSON_FILE}
+curl -s "${CATALOG_CODE_URL}" | jq . > ${CATALOG_CODE_JSON_FILE}
+
+DEMO_CATALOG_CODE=$(cat ${CATALOG_CODE_JSON_FILE} | jq '.[0].childrenCatalog[3].childrenCatalog[3].catalogCode'  | sed 's/\"//g')
+echo "Demo CatalogCode: ${DEMO_CATALOG_CODE}"
+
+
+DEMO_CATALOG_CODE_URL="https://opendocs.alipay.com/api/content/${DEMO_CATALOG_CODE}?_output_charset=utf-8&_input_charset=utf-8"
+DEMO_CATALOG_CODE_JSON_FILE="DemoCatalogCode.json"
+echo "dEMO CatalogCode URL: ${DEMO_CATALOG_CODE_URL}"
+
+rm -rf ${DEMO_CATALOG_CODE_JSON_FILE}
+curl -s "${DEMO_CATALOG_CODE_URL}" | jq . > ${DEMO_CATALOG_CODE_JSON_FILE}
+
+
+
+
 
 # 获取QQ互联官方SDK官方属性（sdk下载url，sdk版本）
 # getQQProperties
