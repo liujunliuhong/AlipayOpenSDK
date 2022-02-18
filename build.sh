@@ -43,6 +43,7 @@ function getMainRepoCode() {
 
 # 获取本地podspec文件的version，以便于和官方version做比较
 getLocalPodVersion
+echo "本地podspec版本: ${LAST_LOCAL_Alipay_PODSPEC_VERSION}"
 
 rm -rf ${ALIPAY_MAIN_HTML_FILE}
 curl ${ALIPAY_MAIN_PAGE_URL} >${ALIPAY_MAIN_HTML_FILE}
@@ -99,13 +100,12 @@ curl -s "${Alipay_SDK_DOWNLOAD_URL}" >${LOCAL_Alipay_ZIP}
 unzip ${LOCAL_Alipay_ZIP} -d ${LOCAL_Alipay_UNZIP_DIRECTORY}
 
 function makePodSpec() {
-    if [ "${LAST_LOCAL_Alipay_PODSPEC_VERSION}" != "${Alipay_SDK_VERSION}" ]; then
-        echo "开始制作包podspec文件，版本号不相等，重新创建podspec文件"
-        rm -rf ${LOCAL_Alipay_PODSPEC_FILE_NAME}
+    echo "创建podspec文件"
+    rm -rf ${LOCAL_Alipay_PODSPEC_FILE_NAME}
 
-        rm -rf ${LOCAL_Alipay_UNZIP_DIRECTORY}/iOS_SDK/AlipaySDK.framework/Modules
-        mkdir ${LOCAL_Alipay_UNZIP_DIRECTORY}/iOS_SDK/AlipaySDK.framework/Modules
-        cat <<-EOF >${LOCAL_Alipay_UNZIP_DIRECTORY}/iOS_SDK/AlipaySDK.framework/Modules/module.modulemap
+    rm -rf ${LOCAL_Alipay_UNZIP_DIRECTORY}/iOS_SDK/AlipaySDK.framework/Modules
+    mkdir ${LOCAL_Alipay_UNZIP_DIRECTORY}/iOS_SDK/AlipaySDK.framework/Modules
+    cat <<-EOF >${LOCAL_Alipay_UNZIP_DIRECTORY}/iOS_SDK/AlipaySDK.framework/Modules/module.modulemap
 framework module AlipaySDK {
     umbrella header "AlipaySDK.h"
     export *
@@ -113,7 +113,7 @@ framework module AlipaySDK {
 }
 EOF
 
-        cat <<-EOF >${LOCAL_Alipay_PODSPEC_FILE_NAME}
+    cat <<-EOF >${LOCAL_Alipay_PODSPEC_FILE_NAME}
 Pod::Spec.new do |spec|
     spec.name                   = '${LOCAL_Alipay_PODSPEC_NAME}'
     spec.version                = '${Alipay_SDK_VERSION}' # 版本号和支付宝的保持一致
@@ -135,9 +135,6 @@ Pod::Spec.new do |spec|
     }
 end
 EOF
-    else
-        echo "开始制作包含支付功能的podspec文件，版本号相等，不再重新创建podspec文件"
-    fi
 }
 
 # 创建podspec文件
