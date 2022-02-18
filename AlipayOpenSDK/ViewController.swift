@@ -6,11 +6,15 @@
 //
 
 import UIKit
+import AlipaySDK
 
 class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        AlipaySDK.defaultService().payOrder("", fromScheme: "") { result in
+            
+        }
         
     }
 

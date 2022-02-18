@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.alipay.sdk.pay.demo"
+    android:versionCode="1"
+    android:versionName="1.0">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
+    <!-- 如果您的 App 的 targetSdkVersion 大于或等于 30，则需要在 AndroidManifest.xml 中提供下面的应用可见性声明，
+         让支付宝 SDK 感知设备上是否已经安装了支付宝 App。同时，您可能还需要升级 Gradle Plugin 到最新版本。
+         关于 Android 11 的 "应用可见性" 机制，参见 https://developer.android.com/about/versions/11/privacy/package-visibility?hl=zh-cn -->
+    <queries>
+        <package android:name="com.eg.android.AlipayGphone" /> <!-- 支付宝 -->
+        <package android:name="hk.alipay.wallet" /> <!-- AlipayHK -->
+    </queries>
+
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:resizeable="true"
+        android:smallScreens="true" />
+
+    <application
+        android:allowBackup="true"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.alipay.sdk.pay.demo.PayDemoActivity"
+            android:icon="@drawable/msp_icon"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.alipay.sdk.pay.demo.H5PayDemoActivity"
+            android:configChanges="orientation|keyboardHidden|navigation"
+            android:exported="false"
+            android:screenOrientation="behind" >
+        </activity>
+    </application>
+
+</manifest>
