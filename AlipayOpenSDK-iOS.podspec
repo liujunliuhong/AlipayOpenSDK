@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
     spec.name                   = 'AlipayOpenSDK-iOS'
-    spec.version                = '15.8.07' # 版本号和支付宝的保持一致
+    spec.version                = '15.8.10' # 版本号和支付宝的保持一致
     spec.homepage               = 'https://github.com/liujunliuhong/AlipayOpenSDK'
     spec.source                 = { :git => 'https://github.com/liujunliuhong/AlipayOpenSDK.git', :tag => spec.version }
     spec.summary                = 'Alipay open SDK'
