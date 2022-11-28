@@ -1,5 +1,5 @@
 PODS:
-  - AlipayOpenSDK-iOS (15.8.07)
+  - AlipayOpenSDK-iOS (15.8.10)
 
 DEPENDENCIES:
   - AlipayOpenSDK-iOS (from `./`)
@@ -9,8 +9,8 @@ EXTERNAL SOURCES:
     :path: "./"
 
 SPEC CHECKSUMS:
-  AlipayOpenSDK-iOS: 0fd42a42befab128956c4ff62a4e374c7e53fe24
+  AlipayOpenSDK-iOS: dea0e38e250f0e398fcb811934ee009dc3679445
 
 PODFILE CHECKSUM: 8b40bf0319c3f8c2e08147847c6cacd7b52c8af9
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.11.3
